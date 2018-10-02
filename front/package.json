@@ -1,0 +1,44 @@
+{
+  "name": "front",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "export NODE_ENV=development && vue-cli-service serve",
+    "build": "npm run stage && npm run prod",
+    "stage": "export NODE_ENV=stage && vue-cli-service build --mode staging && export NODE_ENV=",
+    "prod": "export NODE_ENV=prod && vue-cli-service build --mode prod && export NODE_ENV="
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "quasar-extras": "^2.0.4",
+    "quasar-framework": "^0.17.0",
+    "register-service-worker": "^1.0.0",
+    "vue": "^2.5.17",
+    "vue-axios": "^2.1.4",
+    "vue-router": "^3.0.1",
+    "vuex": "^3.0.1"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.0.4",
+    "@vue/cli-plugin-pwa": "^3.0.4",
+    "@vue/cli-service": "^3.0.4",
+    "babel-plugin-transform-imports": "1.5.0",
+    "node-sass": "^4.9.0",
+    "sass-loader": "^7.0.1",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.2",
+    "vue-cli-plugin-quasar": "^0.17.1",
+    "vue-template-compiler": "^2.5.17",
+    "webpack-obfuscator": "^0.18.0"
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
+}
