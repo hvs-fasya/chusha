@@ -4,5 +4,5 @@ import "github.com/hvs-fasya/chusha/internal/models"
 
 // DBInterface - stores common interface
 type DBInterface interface {
-	TabsGet() ([]*models.Tab, error)
+	TabsGet(bool) ([]*models.Tab, error)
 }

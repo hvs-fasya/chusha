@@ -8,6 +8,18 @@ func getSource() (migrations *migrate.MemoryMigrationSource) {
 			&migrate.Migration{
 				Id: "1",
 				Up: []string{
+					`CREATE TABLE IF NOT EXISTS roles(
+									id bigserial not null,
+									role text not null,
+									primary key(id)
+								);
+					INSERT INTO roles (role) VALUES ('admin');`,
+				},
+				Down: []string{"DROP TABLE roles;"},
+			},
+			&migrate.Migration{
+				Id: "2",
+				Up: []string{
 					`CREATE TABLE IF NOT EXISTS users(
 									id bigserial not null,
 									email text,
@@ -15,17 +27,20 @@ func getSource() (migrations *migrate.MemoryMigrationSource) {
 									nickname text,
 									name text,
 									lastname text,
-									type text not null,
+									role_id int not null,
 									pswd_hash text,
-									primary key(id)
+									primary key(id),
+									CONSTRAINT users_role_id_fkey foreign key (role_id) REFERENCES roles(id) ON DELETE CASCADE
 								);
-					INSERT INTO users (nickname, name, type) VALUES ('Nina', 'Nina', 'admin');
-					INSERT INTO users (nickname, name, type) VALUES ('admin', 'Lena', 'admin');`,
+					INSERT INTO users (nickname, name, role_id) VALUES ('Nina', 'Nina',
+						(SELECT id FROM roles WHERE role='admin'));
+					INSERT INTO users (nickname, name, role_id) VALUES ('admin', 'Lena',
+						(SELECT id FROM roles WHERE role='admin'));`,
 				},
-				Down: []string{"DROP TABLE users"},
+				Down: []string{"ALTER TABLE users DROP CONSTRAINT users_role_id_fkey; DROP TABLE users;"},
 			},
 			&migrate.Migration{
-				Id: "2",
+				Id: "3",
 				Up: []string{
 					`CREATE TABLE IF NOT EXISTS posts(
 									id bigserial not null,
@@ -34,13 +49,12 @@ func getSource() (migrations *migrate.MemoryMigrationSource) {
 									published_at timestamp not null,
 									deleted_at timestamp,
 									primary key(id),
-									unique (title)
-								)`,
+									unique (title))`,
 				},
 				Down: []string{"DROP TABLE posts"},
 			},
 			&migrate.Migration{
-				Id: "3",
+				Id: "4",
 				Up: []string{
 					`CREATE TABLE IF NOT EXISTS comments(
 									id bigserial not null,
@@ -61,30 +75,35 @@ func getSource() (migrations *migrate.MemoryMigrationSource) {
 					"DROP TABLE comments;"},
 			},
 			&migrate.Migration{
-				Id: "4",
+				Id: "5",
 				Up: []string{
 					`CREATE TABLE IF NOT EXISTS tab_types(
 									id bigserial not null,
 									type text not null,
 									primary key(id)
 						);
-					INSERT INTO tab_types (type) VALUES ('blog');`,
+					INSERT INTO tab_types (type) VALUES ('blog');
+					INSERT INTO tab_types (type) VALUES ('webinar');`,
 				},
 				Down: []string{"DROP TABLE tab_types;"},
 			},
 			&migrate.Migration{
-				Id: "5",
+				Id: "6",
 				Up: []string{
 					`CREATE TABLE IF NOT EXISTS tabs(
 									id bigserial not null,
 									title text not null,
 									user_type_visible text[],
 									tab_type_id int,
+									enabled bool,
 									primary key(id),
 									CONSTRAINT tabs_types_tab_type_id_fkey foreign key (tab_type_id) REFERENCES tab_types(id) ON DELETE CASCADE
 								);
-					INSERT INTO tabs (title, user_type_visible, tab_type_id) VALUES ('ЗАПИСИ', '{"all"}', 
-						(SELECT id FROM tab_types WHERE type='blog')
+					INSERT INTO tabs (title, user_type_visible, tab_type_id, enabled) VALUES ('ЗАПИСИ', '{"all"}', 
+						(SELECT id FROM tab_types WHERE type='blog'), true
+					);
+					INSERT INTO tabs (title, user_type_visible, tab_type_id, enabled) VALUES ('ВЕБИНАРЫ', '{"all"}', 
+						(SELECT id FROM tab_types WHERE type='webinar'), true
 					);`,
 				},
 				Down: []string{"ALTER TABLE tabs DROP CONSTRAINT tabs_types_tab_type_id_fkey; DROP TABLE tabs;"},

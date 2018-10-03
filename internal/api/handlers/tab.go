@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/rs/zerolog/log"
 
@@ -15,7 +16,12 @@ func TabsGet(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		return
 	}
-	tabs, err := engine.DB.TabsGet()
+	var enabled bool
+	enabled, err := strconv.ParseBool(r.URL.Query().Get("enabled"))
+	if err != nil {
+		enabled = true
+	}
+	tabs, err := engine.DB.TabsGet(enabled)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Error().Msgf("[DB] TabsGet error %v", err)

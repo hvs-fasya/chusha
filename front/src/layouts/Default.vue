@@ -1,23 +1,11 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-tabs align="justify"  color="primary" inverted>
-      <q-route-tab
-              to="/groups"
+      <q-route-tab v-for="t in this.$store.state.tabs" :key="t.id"
+              :to="t.tab_type.type"
               exact
               slot="title">
-        ГРУППЫ
-      </q-route-tab>
-      <q-route-tab
-              to="/features"
-              exact
-              slot="title">
-        ФИЧИ
-      </q-route-tab>
-      <q-route-tab
-              to="/users"
-              exact
-              slot="title">
-        ПОЛЬЗОВАТЕЛИ
+        {{ t.title }}
       </q-route-tab>
     </q-tabs>
 
@@ -36,10 +24,9 @@
       QTabs
     },
     name: 'LayoutDefault',
-    data () {
-      return {
-
-      }
+    data: () => ({
+    }),
+    mounted(){
     },
     methods: {
     }

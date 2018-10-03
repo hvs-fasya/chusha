@@ -4,19 +4,32 @@
   </div>
 </template>
 <script>
+  import * as utils from './utils'
+  import Blog from './views/Blog'
+  import Webinar from './views/Webinar'
   export default {
     created(){
       this.SetTabs()
     },
+    components:{Blog, Webinar},
     methods: {
       SetTabs: function () {
       this.axios.get('tabs')
         .then(response => {
-          console.log(response.data);
           let tabs = response.data;
-this.$store.dispatch('setTabs').then(
-  this.$router.push("/")
-)
+          //add tabs to router
+          let { routes } = this.$router.options;
+          let routeData = routes.find(r => r.path === "/");
+            tabs.forEach(tab => {
+            routeData.children.push({
+              path: '/'+tab.tab_type.type,
+              name: tab.tab_type.type,
+              component: this.$options.components[utils.capitalize(tab.tab_type.type)]
+            })
+          });
+          this.$router.addRoutes([routeData]);
+          //add tabs list to store
+          this.$store.dispatch('setTabs', tabs)
         })
         .catch(e => {
           console.log("ERROR: " + e)

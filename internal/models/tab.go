@@ -5,6 +5,7 @@ type Tab struct {
 	ID              int64    `json:"id"`
 	Title           string   `json:"title"`
 	UserTypeVisible []string `json:"user_type_visible"`
+	Enabled         bool     `json:"enabled"`
 	*TabType        `json:"tab_type"`
 }
 
