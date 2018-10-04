@@ -13,7 +13,8 @@ func getSource() (migrations *migrate.MemoryMigrationSource) {
 									role text not null,
 									primary key(id)
 								);
-					INSERT INTO roles (role) VALUES ('admin');`,
+					INSERT INTO roles (role) VALUES ('admin');
+					INSERT INTO roles (role) VALUES ('client');`,
 				},
 				Down: []string{"DROP TABLE roles;"},
 			},
@@ -30,11 +31,13 @@ func getSource() (migrations *migrate.MemoryMigrationSource) {
 									role_id int not null,
 									pswd_hash text,
 									primary key(id),
+									unique (email),
+									unique (nickname),
 									CONSTRAINT users_role_id_fkey foreign key (role_id) REFERENCES roles(id) ON DELETE CASCADE
 								);
 					INSERT INTO users (nickname, name, role_id) VALUES ('Nina', 'Nina',
 						(SELECT id FROM roles WHERE role='admin'));
-					INSERT INTO users (nickname, name, role_id) VALUES ('admin', 'Lena',
+					INSERT INTO users (nickname, name, role_id) VALUES ('admin', 'admin',
 						(SELECT id FROM roles WHERE role='admin'));`,
 				},
 				Down: []string{"ALTER TABLE users DROP CONSTRAINT users_role_id_fkey; DROP TABLE users;"},
@@ -82,6 +85,7 @@ func getSource() (migrations *migrate.MemoryMigrationSource) {
 									type text not null,
 									primary key(id)
 						);
+					INSERT INTO tab_types (type) VALUES ('home');
 					INSERT INTO tab_types (type) VALUES ('blog');
 					INSERT INTO tab_types (type) VALUES ('webinar');`,
 				},
@@ -95,15 +99,19 @@ func getSource() (migrations *migrate.MemoryMigrationSource) {
 									title text not null,
 									user_type_visible text[],
 									tab_type_id int,
+									index int not null,
 									enabled bool,
 									primary key(id),
 									CONSTRAINT tabs_types_tab_type_id_fkey foreign key (tab_type_id) REFERENCES tab_types(id) ON DELETE CASCADE
 								);
-					INSERT INTO tabs (title, user_type_visible, tab_type_id, enabled) VALUES ('ЗАПИСИ', '{"all"}', 
-						(SELECT id FROM tab_types WHERE type='blog'), true
+					INSERT INTO tabs (title, user_type_visible, tab_type_id, index, enabled) VALUES ('HOME', '{"all"}', 
+						(SELECT id FROM tab_types WHERE type='home'), 1, true
 					);
-					INSERT INTO tabs (title, user_type_visible, tab_type_id, enabled) VALUES ('ВЕБИНАРЫ', '{"all"}', 
-						(SELECT id FROM tab_types WHERE type='webinar'), true
+					INSERT INTO tabs (title, user_type_visible, tab_type_id, index, enabled) VALUES ('БЛОГ', '{"all"}', 
+						(SELECT id FROM tab_types WHERE type='blog'), 2, true
+					);
+					INSERT INTO tabs (title, user_type_visible, tab_type_id, index, enabled) VALUES ('ВЕБИНАРЫ', '{"all"}', 
+						(SELECT id FROM tab_types WHERE type='webinar'), 3, true
 					);`,
 				},
 				Down: []string{"ALTER TABLE tabs DROP CONSTRAINT tabs_types_tab_type_id_fkey; DROP TABLE tabs;"},

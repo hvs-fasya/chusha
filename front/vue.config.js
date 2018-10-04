@@ -7,7 +7,12 @@ module.exports = {
     hot: true,
     port: 8087, // CHANGE YOUR PORT HERE!
     https: false,
-    inline: true
+    inline: true,
+    proxy: {
+      '/api/v1/':{
+        target: 'http://localhost:8080'
+      }
+    }
   },
   outputDir: process.env.NODE_ENV === 'stage' ? 'stage' : 'dist',
   pluginOptions: {

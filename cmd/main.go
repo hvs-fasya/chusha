@@ -13,6 +13,7 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/hvs-fasya/chusha/internal/api"
+	"github.com/hvs-fasya/chusha/internal/api/handlers/front"
 	"github.com/hvs-fasya/chusha/internal/engine"
 	"github.com/hvs-fasya/chusha/internal/migrate"
 )
@@ -68,6 +69,7 @@ func main() {
 	//инициализация сервера
 	srv := api.Server{}
 	connstr := ":" + opts.APIPort
+	front.InitFront(opts.StaticPath)
 	go srv.Run(connstr)
 
 	jsRouter := mux.NewRouter()

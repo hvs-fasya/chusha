@@ -7,11 +7,12 @@
   import * as utils from './utils'
   import Blog from './views/Blog'
   import Webinar from './views/Webinar'
+  import Home from './views/Home'
   export default {
     created(){
       this.SetTabs()
     },
-    components:{Blog, Webinar},
+    components:{Blog, Webinar, Home},
     methods: {
       SetTabs: function () {
       this.axios.get('tabs')

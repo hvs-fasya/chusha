@@ -12,10 +12,6 @@ import (
 
 //TabsGet get tabs list
 func TabsGet(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodOptions {
-		w.WriteHeader(http.StatusOK)
-		return
-	}
 	var enabled bool
 	enabled, err := strconv.ParseBool(r.URL.Query().Get("enabled"))
 	if err != nil {

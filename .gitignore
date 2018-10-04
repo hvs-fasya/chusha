@@ -5,3 +5,7 @@
 *.njsproj
 *.sln
 *.sw*
+
+
+cert.pem
+key.pem

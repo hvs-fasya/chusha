@@ -11,11 +11,11 @@ import (
 //TabsGet get tabs list
 func (db *PgDB) TabsGet(enabled bool) ([]*models.Tab, error) {
 	var tabs []*models.Tab
-	query := `SELECT t.id, t.title, t.user_type_visible, t.enabled,
+	query := `SELECT t.id, t.title, t.user_type_visible, t.index, t.enabled,
 				tp.id, tp.type
 			FROM tabs t 
 			JOIN tab_types tp ON tp.id=t.tab_type_id
-			WHERE t.enabled = $1::boolean`
+			WHERE t.enabled = $1::boolean ORDER BY t.index`
 	rows, err := db.Conn.Query(query, strconv.FormatBool(enabled))
 	if err != nil {
 		return tabs, err
@@ -28,6 +28,7 @@ func (db *PgDB) TabsGet(enabled bool) ([]*models.Tab, error) {
 			&tab.ID,
 			&tab.Title,
 			pq.Array(&tab.UserTypeVisible),
+			&tab.Index,
 			&tab.Enabled,
 			&tab.TabType.ID,
 			&tab.TabType.Type,
