@@ -2,22 +2,19 @@
 
 
 [[projects]]
-  branch = "develop"
-  name = "git.wildberries.ru/portals/sheduler"
-  packages = ["internal/metrics"]
-  revision = "d8730a2bb495dc0548ce337cd335ff5157ef068b"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/beorn7/perks"
-  packages = ["quantile"]
-  revision = "3a771d992973f24aa725d07868b467d1ddfceafb"
-
-[[projects]]
-  name = "github.com/golang/protobuf"
-  packages = ["proto"]
-  revision = "aa810b61a9c79d51363740d207bb46cf8e620ed5"
-  version = "v1.2.0"
+  name = "github.com/go-redis/redis"
+  packages = [
+    ".",
+    "internal",
+    "internal/consistenthash",
+    "internal/hashtag",
+    "internal/pool",
+    "internal/proto",
+    "internal/singleflight",
+    "internal/util"
+  ]
+  revision = "f3bba01df2026fc865f7782948845db9cf44cf23"
+  version = "v6.14.1"
 
 [[projects]]
   name = "github.com/gorilla/context"
@@ -47,45 +44,6 @@
   version = "v1.0.0"
 
 [[projects]]
-  name = "github.com/matttproud/golang_protobuf_extensions"
-  packages = ["pbutil"]
-  revision = "c12348ce28de40eed0136aa2b644d0ee0650e56c"
-  version = "v1.0.1"
-
-[[projects]]
-  name = "github.com/prometheus/client_golang"
-  packages = ["prometheus"]
-  revision = "c5b7fccd204277076155f10851dad72b76a49317"
-  version = "v0.8.0"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/prometheus/client_model"
-  packages = ["go"]
-  revision = "5c3871d89910bfb32f5fcab2aa4b9ec68e65a99f"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/prometheus/common"
-  packages = [
-    "expfmt",
-    "internal/bitbucket.org/ww/goautoneg",
-    "model"
-  ]
-  revision = "c7de2306084e37d54b8be01f3541a8464345e9a5"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/prometheus/procfs"
-  packages = [
-    ".",
-    "internal/util",
-    "nfs",
-    "xfs"
-  ]
-  revision = "418d78d0b9a7b7de3a6bbc8a23def624cc977bb2"
-
-[[projects]]
   name = "github.com/rs/zerolog"
   packages = [
     ".",
@@ -106,6 +64,12 @@
   revision = "3f452fc0ebebbb784fdab91f7bc79a31dcacab5c"
 
 [[projects]]
+  name = "github.com/satori/go.uuid"
+  packages = ["."]
+  revision = "f58768cc1a7a7e77a3bd49e98cdd21419399b6a3"
+  version = "v1.2.0"
+
+[[projects]]
   name = "gopkg.in/gorp.v1"
   packages = ["."]
   revision = "c87af80f3cc5036b55b83d77171e156791085e2e"
@@ -114,6 +78,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "aef1ac61c8a8a48e56269b3c870c651166c2819117fa67b84fd010dbb8c76ccc"
+  inputs-digest = "40fef63cfafc30df092e2de8c7c38922754db18bf147df0a478e7a3bef76abda"
   solver-name = "gps-cdcl"
   solver-version = 1

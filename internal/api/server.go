@@ -39,8 +39,8 @@ func NewRouter() *mux.Router {
 	apiRouter.Use(respondOptions)
 
 	apiRouter.HandleFunc("/tabs", handlers.TabsGet).Methods("GET", "OPTIONS")
-	apiRouter.HandleFunc("/login", handlers.UserLogin).Methods("POST", "OPTIONS")
-	apiRouter.HandleFunc("/logout", handlers.UserLogout).Methods("GET", "OPTIONS")
+	apiRouter.HandleFunc("/session", handlers.SessionCreate).Methods("POST", "OPTIONS")
+	apiRouter.HandleFunc("/session", handlers.SessionDestroy).Methods("DELETE", "OPTIONS")
 	return rt
 }
 

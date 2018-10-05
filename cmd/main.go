@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/go-redis/redis"
 	"github.com/jessevdk/go-flags"
 	_ "github.com/lib/pq"
 	"github.com/rs/zerolog"
@@ -13,6 +14,7 @@ import (
 	"github.com/hvs-fasya/chusha/internal/api/handlers/front"
 	"github.com/hvs-fasya/chusha/internal/engine"
 	"github.com/hvs-fasya/chusha/internal/migrate"
+	redis_client "github.com/hvs-fasya/chusha/internal/redis-client"
 )
 
 var opts struct {
@@ -21,6 +23,10 @@ var opts struct {
 	DatabasePass    string `long:"db-pass" env:"DB_PASS" default:"chusha" description:"user password of database"`
 	DatabaseDialect string `long:"db-dialect" env:"DB_DIALECT" default:"postgres" description:"database engine"`
 	DatabaseHOST    string `long:"db-host" env:"DB_HOST" default:"127.0.0.1:5432" description:"database host name"`
+
+	RedisHOST string `long:"redis-host" env:"REDIS_HOST" default:"localhost:6379" description:"redis-client host name"`
+	RedisPass string `long:"redis-pass" env:"REDIS_PASS" default:"" description:"redis-client password"`
+	RedisDB   int    `long:"redis-db" env:"REDIS_DB" default:"0" description:"redis-client database"`
 
 	APIPort string `long:"api-port" env:"API_PORT" default:"8080" description:"api server port"`
 	//FrontPort  string `long:"front-port" env:"FRONT_PORT" default:"8081" description:"front server port"`
@@ -48,6 +54,16 @@ func main() {
 	}
 	engine.DB = dataBase
 	log.Info().Msgf("Подключение к БД - успешно. БД хост: %s", opts.DatabaseHOST)
+	//подключение к редис
+	redisOptions := &redis.Options{
+		Addr:     opts.RedisHOST,
+		Password: opts.RedisPass,
+		DB:       opts.RedisDB,
+	}
+	err = redis_client.NewRedis(redisOptions)
+	if err != nil {
+		log.Panic().Msg(err.Error())
+	}
 	//накатываем миграции
 	migrationService := migrate.NewMigrationService(dataBase.Conn, opts.DatabaseDialect)
 	if opts.MigrateDown {

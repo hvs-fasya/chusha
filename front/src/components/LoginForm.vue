@@ -78,7 +78,7 @@
     methods: {
     Login: function () {
       console.log("LOGIN: " + this.user);
-      this.axios.post('login',{
+      this.axios.post('session',{
             username: this.user.nickname,
             password: this.user.password
         },
