@@ -2,11 +2,8 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 	"os"
-	"time"
 
-	"github.com/gorilla/mux"
 	"github.com/jessevdk/go-flags"
 	_ "github.com/lib/pq"
 	"github.com/rs/zerolog"
@@ -25,8 +22,8 @@ var opts struct {
 	DatabaseDialect string `long:"db-dialect" env:"DB_DIALECT" default:"postgres" description:"database engine"`
 	DatabaseHOST    string `long:"db-host" env:"DB_HOST" default:"127.0.0.1:5432" description:"database host name"`
 
-	APIPort    string `long:"api-port" env:"API_PORT" default:"8080" description:"api server port"`
-	FrontPort  string `long:"front-port" env:"FRONT_PORT" default:"8081" description:"front server port"`
+	APIPort string `long:"api-port" env:"API_PORT" default:"8080" description:"api server port"`
+	//FrontPort  string `long:"front-port" env:"FRONT_PORT" default:"8081" description:"front server port"`
 	StaticPath string `long:"static-path" env:"STATIC_PATH" default:"./front/stage/" description:"static files path"`
 
 	LogLevel    int    `long:"log-level" env:"LOG_LEVEL" default:"0" description:"log level debug:0, info: 1, warn: 2, error: 3, fatal: 4, panic:5"`
@@ -70,51 +67,7 @@ func main() {
 	srv := api.Server{}
 	connstr := ":" + opts.APIPort
 	front.InitFront(opts.StaticPath)
-	go srv.Run(connstr)
-
-	jsRouter := mux.NewRouter()
-	jsRouter.HandleFunc("/", IndexHandler).Methods("GET")
-	jsRouter.HandleFunc("/favicon.ico", FaviconHandler).Methods("GET")
-
-	jsRouter.HandleFunc(`/{js:.+\.js}`, func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "text/javascript")
-		vars := mux.Vars(r)
-		f := vars["js"]
-		http.ServeFile(w, r, opts.StaticPath+f)
-	}).Methods("GET")
-
-	jsRouter.HandleFunc("/fonts/{font}", func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		f := vars["font"]
-		http.ServeFile(w, r, opts.StaticPath+"fonts/"+f)
-	}).Methods("GET")
-
-	jsRouter.HandleFunc("/alive", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("HTTP OK\n"))
-	})
-
-	jsServer := &http.Server{
-		Addr:              fmt.Sprintf("%s:%s", "", opts.FrontPort),
-		Handler:           jsRouter,
-		ReadHeaderTimeout: 5 * time.Second,
-		WriteTimeout:      5 * time.Second,
-		IdleTimeout:       5 * time.Second,
-	}
-
-	err = jsServer.ListenAndServe()
-	log.Error().Str("error", err.Error()).Msg("js server terminated")
-}
-
-//IndexHandler http handler for index.html file
-func IndexHandler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, opts.StaticPath+"index.html")
-}
-
-//FaviconHandler http handler for favicon.ico file
-func FaviconHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "image/x-icon")
-	http.ServeFile(w, r, opts.StaticPath+"favicon.ico")
+	srv.Run(connstr)
 }
 
 func setLogger() {

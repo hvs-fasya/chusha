@@ -1,15 +1,14 @@
 package front
 
 import (
+	"fmt"
 	"net/http"
 
-	"fmt"
 	"github.com/gorilla/mux"
 )
 
 var (
 	StaticPath = ""
-	PublicPath = "./front/public/"
 )
 
 func InitFront(staticPath string) {

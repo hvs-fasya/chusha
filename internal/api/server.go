@@ -4,9 +4,10 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/zerolog/log"
+
 	"github.com/hvs-fasya/chusha/internal/api/handlers"
 	"github.com/hvs-fasya/chusha/internal/api/handlers/front"
-	"github.com/rs/zerolog/log"
 )
 
 // Server is http server
