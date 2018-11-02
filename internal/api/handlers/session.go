@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -9,7 +10,6 @@ import (
 
 	"github.com/satori/go.uuid"
 
-	"database/sql"
 	"github.com/hvs-fasya/chusha/internal/engine"
 )
 
@@ -38,6 +38,7 @@ func SessionCreate(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	fmt.Printf("%+v", user)
+	//todo: save sessionToken to redis
 	sessionToken := uuid.NewV4().String()
 	http.SetCookie(w, &http.Cookie{
 		Name:     SessionCookieName,
@@ -64,6 +65,7 @@ func SessionDestroy(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	fmt.Println(c.Value)
+	//todo: destroy sessionToken in redis
 	sessionToken := c.Value
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(sessionToken))

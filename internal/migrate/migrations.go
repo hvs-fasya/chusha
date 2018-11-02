@@ -11,7 +11,8 @@ func getSource() (migrations *migrate.MemoryMigrationSource) {
 					`CREATE TABLE IF NOT EXISTS roles(
 									id bigserial not null,
 									role text not null,
-									primary key(id)
+									primary key(id),
+									unique (role)
 								);
 					INSERT INTO roles (role) VALUES ('admin');
 					INSERT INTO roles (role) VALUES ('client');`,

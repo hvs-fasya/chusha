@@ -6,5 +6,8 @@ import "github.com/hvs-fasya/chusha/internal/models"
 type DBInterface interface {
 	TabsGet(bool) ([]*models.Tab, error)
 
-	UserCheck(string, string) (*models.User, error)
+	UserCheck(string, string) (*models.UserDB, error)
+	UserCreate(*models.UserNewInput) error
+
+	RoleGetByName(role string) (*models.RoleDB, error)
 }

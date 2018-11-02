@@ -54,7 +54,7 @@ func setApiHeaders(next http.Handler) http.Handler {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Accept,Authorization,Cache-Control,Content-Type,DNT,Expires,If-Modified-Since,Keep-Alive,Origin,Pragma,User-Agent,X-Requested-With,X-Initiator-User")
+		w.Header().Set("Access-Control-Allow-Headers", "Accept,Authorization,Cache-Control,Content-Type,DNT,Expires,If-Modified-Since,Keep-Alive,Origin,Pragma,UserDB-Agent,X-Requested-With,X-Initiator-UserDB")
 		next.ServeHTTP(w, r)
 	})
 }
