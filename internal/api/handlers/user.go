@@ -12,6 +12,7 @@ import (
 
 	"github.com/hvs-fasya/chusha/internal/engine"
 	"github.com/hvs-fasya/chusha/internal/models"
+	"github.com/hvs-fasya/chusha/internal/utils"
 )
 
 //UserRegister register user
@@ -33,8 +34,23 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 		errorToResponse("failed to unmarshal request body", HumanInternalError)
 		return
 	}
+	errs := user.Validate()
+	if len(errs) != 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		errResp := ErrResponse{
+			Errors:      []string{},
+			HumanErrors: []string{},
+		}
+		for _, e := range errs {
+			errResp.Errors = append(errResp.Errors, e)
+			errResp.HumanErrors = append(errResp.HumanErrors, e)
+		}
+		resp, _ := json.Marshal(errResp)
+		w.Write(resp)
+		return
+	}
 	user.Role = new(models.RoleDB)
-	user.Role, err = engine.DB.RoleGetByName(ClientRoleName)
+	user.Role, err = engine.DB.RoleGetByName(utils.ClientRoleName)
 	if err != nil {
 		log.Error().Msgf("database GET ROLE BY NAME request error: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -44,7 +60,7 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 	err = engine.DB.UserCreate(user)
 	if err != nil {
 		if pgerr, ok := err.(*pq.Error); ok {
-			if pgerr.Code == "23503" { //foreign key login or email violation
+			if pgerr.Code == "23503" { //unique key login or email violation
 				w.WriteHeader(http.StatusBadRequest)
 				w.Write(errorToResponse("login or email "+ErrAlreadyExist, "логин или email "+ErrAlreadyExistRus))
 				return

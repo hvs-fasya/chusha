@@ -1,6 +1,9 @@
 package migrate
 
-import "github.com/rubenv/sql-migrate"
+import (
+	"github.com/hvs-fasya/chusha/internal/utils"
+	"github.com/rubenv/sql-migrate"
+)
 
 func getSource() (migrations *migrate.MemoryMigrationSource) {
 	migrations = &migrate.MemoryMigrationSource{
@@ -37,9 +40,9 @@ func getSource() (migrations *migrate.MemoryMigrationSource) {
 									CONSTRAINT users_role_id_fkey foreign key (role_id) REFERENCES roles(id) ON DELETE CASCADE
 								);
 					INSERT INTO users (nickname, name, role_id) VALUES ('Nina', 'Nina',
-						(SELECT id FROM roles WHERE role='admin'));
+						(SELECT id FROM roles WHERE role='` + utils.AdminRoleName + `'));
 					INSERT INTO users (nickname, name, role_id) VALUES ('admin', 'admin',
-						(SELECT id FROM roles WHERE role='admin'));`,
+						(SELECT id FROM roles WHERE role='` + utils.AdminRoleName + `'));`,
 				},
 				Down: []string{"ALTER TABLE users DROP CONSTRAINT users_role_id_fkey; DROP TABLE users;"},
 			},

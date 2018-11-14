@@ -41,6 +41,7 @@ func NewRouter() *mux.Router {
 	apiRouter.HandleFunc("/tabs", handlers.TabsGet).Methods("GET", "OPTIONS")
 	apiRouter.HandleFunc("/session", handlers.SessionCreate).Methods("POST", "OPTIONS")
 	apiRouter.HandleFunc("/session", handlers.SessionDestroy).Methods("DELETE", "OPTIONS")
+	apiRouter.HandleFunc("/user", handlers.UserRegister).Methods("POST", "OPTIONS")
 	return rt
 }
 

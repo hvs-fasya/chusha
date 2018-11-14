@@ -7,7 +7,6 @@ import (
 
 const (
 	HumanInternalError = "Что-то пошло не так"
-	ClientRoleName     = "client"
 
 	ErrAlreadyExist    = "already exists"
 	ErrAlreadyExistRus = "уже существует"

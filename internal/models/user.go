@@ -18,6 +18,18 @@ type UserNewInput struct {
 	UserDB
 }
 
+//Validate valudate user create input
+func (u UserNewInput) Validate() []string {
+	errs := make([]string, 0)
+	if u.Email == "" {
+		errs = append(errs, "поле email обязательно к заполнению")
+	}
+	if u.Nickname == "" {
+		errs = append(errs, "поле nickname обязательно к заполнению")
+	}
+	return errs
+}
+
 //UserOut user data output structure
 type UserOut struct {
 	UserDB
