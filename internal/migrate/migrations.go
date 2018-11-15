@@ -30,22 +30,22 @@ func getSource() (migrations *migrate.MemoryMigrationSource) {
 				Up: []string{
 					`CREATE TABLE IF NOT EXISTS users(
 									id bigserial not null,
-									email text,
-									phone text,
-									nickname text,
-									name text,
-									lastname text,
+									email text not null,
+									phone text not null,
+									nickname text not null,
+									name text not null,
+									lastname text not null,
 									role_id int not null,
-									pswd_hash text,
+									pswd_hash text not null,
 									primary key(id),
 									unique (email),
 									unique (nickname),
 									CONSTRAINT users_role_id_fkey foreign key (role_id) REFERENCES roles(id) ON DELETE CASCADE
 								);
-					INSERT INTO users (nickname, name, role_id, pswd_hash) VALUES ('Nina', 'Nina',
-						(SELECT id FROM roles WHERE role='` + utils.AdminRoleName + `'), '` + h + `');
-					INSERT INTO users (nickname, name, role_id, pswd_hash) VALUES ('admin', 'admin',
-						(SELECT id FROM roles WHERE role='` + utils.AdminRoleName + `'), '` + h + `');`,
+					INSERT INTO users (nickname, name, role_id, pswd_hash, lastname, phone, email) VALUES ('Nina', 'Nina',
+						(SELECT id FROM roles WHERE role='` + utils.AdminRoleName + `'), '` + h + `', '', '', 'nina@example.com');
+					INSERT INTO users (nickname, name, role_id, pswd_hash, lastname, phone, email) VALUES ('admin', 'admin',
+						(SELECT id FROM roles WHERE role='` + utils.AdminRoleName + `'), '` + h + `', '', '', 'admin@example.com');`,
 				},
 				Down: []string{"ALTER TABLE users DROP CONSTRAINT users_role_id_fkey; DROP TABLE users;"},
 			},

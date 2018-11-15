@@ -20,6 +20,7 @@
                 <q-input v-if="modalType == 'signup'" v-model="user.nickname" float-label="Логин*" clearable/>
                 <q-input v-if="modalType == 'signup'" v-model="user.email" float-label="Email*" clearable/>
                 <q-input v-model="user.password" float-label="Пароль*" clearable/>
+                <q-input v-if="modalType == 'signup'" v-model="user.phone" float-label="Телефон" clearable/>
                 <q-input v-if="modalType == 'signup'" v-model="user.name" float-label="Имя" clearable/>
                 <q-input v-if="modalType == 'signup'" v-model="user.lastname" float-label="Фамилия" clearable/>
                 <div class="q-mt-xl">
@@ -50,6 +51,8 @@
   import { Notify } from 'quasar'
   import * as utils from './../utils'
   //todo: validate user inputs
+  //todo: user phone country prefix
+  //todo: phone mask
   export default {
     name: "LoginForm",
     data () {
@@ -107,7 +110,14 @@
           })
     },
     SignUp: function () {
-      console.log("SIGNUP: " + this.user)
+      console.log(JSON.stringify(this.user));
+      this.axios.post('user', JSON.stringify(this.user), {jar: true, withCredentials: true})
+        .then(response => {
+          console.log(response.data)
+        })
+        .catch(e => {
+          console.log("ERROR: " + e)
+        })
     },
     ClearUser: function () {
       for (let key in this.user) {
