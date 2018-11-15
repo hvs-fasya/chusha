@@ -10,7 +10,8 @@
   import Home from './views/Home'
   export default {
     created(){
-      this.SetTabs()
+      this.SetTabs();
+      this.RefreshAuth();
     },
     components:{Blog, Webinar, Home},
     methods: {
@@ -36,6 +37,16 @@
           console.log("ERROR: " + e)
           }
         )
+      },
+      RefreshAuth: function () {
+        this.axios.get('session')
+          .then(response => {
+            this.$store.commit('setUser', response.data);
+            this.$store.commit('setLoggedIn');
+          })
+          .catch(e => {
+            console.log(e)
+          })
       }
     }
   }

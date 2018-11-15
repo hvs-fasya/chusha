@@ -11,6 +11,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/satori/go.uuid"
 
+	"fmt"
 	"github.com/hvs-fasya/chusha/internal/engine"
 	"github.com/hvs-fasya/chusha/internal/redis-client"
 )
@@ -72,10 +73,6 @@ func SessionDestroy(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	sessionToken := strings.Replace(c.Value, SessionCookieName+"=", "", 1)
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
 	valid, _ := redis_client.RedisClient.Client.Exists(sessionToken).Result()
 	if valid == 0 {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -89,4 +86,41 @@ func SessionDestroy(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(sessionToken))
+}
+
+//SessionCheck check session is valid
+func SessionCheck(w http.ResponseWriter, r *http.Request) {
+	c, err := r.Cookie(SessionCookieName)
+	if err != nil {
+		fmt.Println(err)
+		switch err {
+		case http.ErrNoCookie:
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		default:
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+	}
+	sessionToken := strings.Replace(c.Value, SessionCookieName+"=", "", 1)
+	username, err := redis_client.RedisClient.Client.Get(sessionToken).Result()
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	user, err := engine.DB.UserGetByName(username)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		default:
+			log.Error().Msgf("database USER GET BY NAME request error: %s", err)
+			respond500(w)
+			return
+		}
+	}
+	resp, _ := json.Marshal(user)
+	w.WriteHeader(http.StatusOK)
+	w.Write(resp)
 }

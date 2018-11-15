@@ -47,6 +47,7 @@
 
 <script>
   import { EventBus } from './../event-bus.js'
+  import { Notify } from 'quasar'
   import * as utils from './../utils'
   //todo: validate user inputs
   export default {
@@ -87,6 +88,10 @@
             withCredentials: true
         })
         .then(response => {
+          this.$q.notify({
+            type: 'positive',
+            message: 'Вы успешно авторизовались!'
+          });
           this.opened = false;
           this.$store.commit('setUser', response.data);
           this.$store.commit('setLoggedIn');

@@ -5,7 +5,8 @@
       <q-toolbar-title>
         CHUSHA
       </q-toolbar-title>
-      <q-btn v-if="$store.state.loggedIn" flat @click="Logout()">Выйти</q-btn>
+      <span v-if="$store.state.loggedIn">{{$store.state.user.email}}</span>
+      <q-btn v-if="$store.state.loggedIn" class="float-right" flat @click="Logout()">Выйти</q-btn>
       <q-btn v-if="!$store.state.loggedIn" flat @click="ShowSignUp()">Зарегистрироваться</q-btn>
       <q-btn v-if="!$store.state.loggedIn" flat @click="ShowLogin()">Войти</q-btn>
     </q-toolbar>

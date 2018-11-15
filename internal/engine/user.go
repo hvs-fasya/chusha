@@ -51,3 +51,28 @@ func (db *PgDB) UserCheck(login string, pwd string) (*models.UserDB, error) {
 	err = bcrypt.CompareHashAndPassword([]byte(user.PswdHash), []byte(pwd))
 	return user, err //if err != nil => user not authorized
 }
+
+//UserGetByName get user object by nickname
+func (db *PgDB) UserGetByName(nickname string) (*models.UserDB, error) {
+	user := new(models.UserDB)
+	user.Role = new(models.RoleDB)
+	q := `SELECT u.id, u.email, u.phone, u.nickname, u.name, u.lastname,
+				r.id, r.role
+			FROM users u
+			JOIN roles r ON u.role_id=r.id
+			WHERE u.nickname=$1 LIMIT 1`
+	err := db.Conn.QueryRow(q, nickname).Scan(
+		&user.ID,
+		&user.Email,
+		&user.Phone,
+		&user.Nickname,
+		&user.Name,
+		&user.LastName,
+		&user.Role.ID,
+		&user.Role.Role,
+	)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
+}

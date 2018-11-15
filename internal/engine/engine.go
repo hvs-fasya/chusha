@@ -8,6 +8,7 @@ type DBInterface interface {
 
 	UserCheck(string, string) (*models.UserDB, error)
 	UserCreate(*models.UserNewInput, string) error
+	UserGetByName(string) (*models.UserDB, error)
 
 	RoleGetByName(role string) (*models.RoleDB, error)
 }
