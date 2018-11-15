@@ -5,9 +5,9 @@
       <q-toolbar-title>
         CHUSHA
       </q-toolbar-title>
-      <q-btn flat @click="Logout()">Выйти</q-btn>
-      <q-btn flat @click="ShowSignUp()">Зарегистрироваться</q-btn>
-      <q-btn flat @click="ShowLogin()">Войти</q-btn>
+      <q-btn v-if="$store.state.loggedIn" flat @click="Logout()">Выйти</q-btn>
+      <q-btn v-if="!$store.state.loggedIn" flat @click="ShowSignUp()">Зарегистрироваться</q-btn>
+      <q-btn v-if="!$store.state.loggedIn" flat @click="ShowLogin()">Войти</q-btn>
     </q-toolbar>
 
     <q-tabs align="justify"  color="primary" inverted>
@@ -50,7 +50,7 @@
       Logout: function () {
         this.axios.delete('session',{},{jar: true, withCredentials: true})
           .then(response => {
-            console.log(response.data)
+            this.$store.commit('setLoggedOut');
           })
           .catch(e => {
             if (e.response.status === 401) {
@@ -58,7 +58,6 @@
             } else {
               utils.notify500();
             }
-            console.log("ERROR: " + e)
           })
       }
     }

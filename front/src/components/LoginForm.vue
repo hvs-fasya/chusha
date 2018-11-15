@@ -88,10 +88,11 @@
         })
         .then(response => {
           this.opened = false;
+          this.$store.commit('setUser', response.data);
+          this.$store.commit('setLoggedIn');
           this.ClearUser();
         })
         .catch(e => {
-          console.log(e.response);
           if (e.response.status === 401) {
             utils.notify401();
           } else {
