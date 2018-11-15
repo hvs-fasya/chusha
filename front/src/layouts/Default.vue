@@ -28,6 +28,7 @@
 <script>
   import {EventBus} from "../event-bus";
   import LoginForm from "../components/LoginForm"
+  import * as utils from './../utils';
   export default {
     data () {
       return {
@@ -47,12 +48,16 @@
         EventBus.$emit('user-form-open', 'signup')
       },
       Logout: function () {
-        console.log("LOGOUT: " + this.user);
         this.axios.delete('session',{},{jar: true, withCredentials: true})
           .then(response => {
             console.log(response.data)
           })
           .catch(e => {
+            if (e.response.status === 401) {
+              utils.notify401();
+            } else {
+              utils.notify500();
+            }
             console.log("ERROR: " + e)
           })
       }

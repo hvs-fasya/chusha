@@ -47,6 +47,7 @@
 
 <script>
   import { EventBus } from './../event-bus.js'
+  import * as utils from './../utils'
   //todo: validate user inputs
   export default {
     name: "LoginForm",
@@ -55,12 +56,12 @@
         opened: false,
         modalType: "",
         user: {
-          login:"",
-          nickname: "",
-          password: "",
+          login: "",
           email: "",
-          name:"",
-          lastname:""
+          phone: "",
+          nickname: "",
+          name: "",
+          lastname: ""
         }
       }
     },
@@ -74,35 +75,40 @@
       EventBus.$off('user-form-open');
       this.opened = false;
       this.modalType = "";
-      this.user = {
-        login:"",
-        nickname: "",
-        password: "",
-        email: "",
-        name:"",
-        lastname:""
-      }
+      this.ClearUser();
     },
     methods: {
     Login: function () {
-      console.log(this.user);
       this.axios.post('session',{
             login: this.user.login,
             password: this.user.password
-        },
-        {
-          withCredentials: true
+        }, {
+            jar:true,
+            withCredentials: true
         })
         .then(response => {
-            console.log(response.headers)
-            console.log(response.data)
+          this.opened = false;
+          this.ClearUser();
         })
         .catch(e => {
-            console.log("ERROR: " + e)
+          console.log(e.response);
+          if (e.response.status === 401) {
+            utils.notify401();
+          } else {
+            utils.notify500();
+          }
+            this.opened = true;
           })
     },
     SignUp: function () {
       console.log("SIGNUP: " + this.user)
+    },
+    ClearUser: function () {
+      for (let key in this.user) {
+        if (this.user.hasOwnProperty(key)) {
+          this.user[key] = "";
+        }
+      }
     }
     }
   }

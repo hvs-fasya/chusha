@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-redis/redis"
 	"github.com/jessevdk/go-flags"
+	"github.com/kabukky/httpscerts"
 	_ "github.com/lib/pq"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -15,7 +16,6 @@ import (
 	"github.com/hvs-fasya/chusha/internal/engine"
 	"github.com/hvs-fasya/chusha/internal/migrate"
 	"github.com/hvs-fasya/chusha/internal/redis-client"
-	"github.com/kabukky/httpscerts"
 )
 
 var opts struct {

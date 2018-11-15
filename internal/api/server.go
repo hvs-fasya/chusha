@@ -10,17 +10,17 @@ import (
 	"github.com/hvs-fasya/chusha/internal/api/handlers/front"
 )
 
-// Server is http server
+// Server wraps http server
 type Server struct {
 	httpServer *http.Server
 }
 
 // Run server
 func (s *Server) Run(connstr string) {
-	log.Info().Msg("Запуск сервера на " + connstr)
+	log.Info().Msg("Start server at " + connstr)
 	e := http.ListenAndServeTLS(connstr, "cert.pem", "key.pem", NewRouter())
 	if e != nil {
-		log.Fatal().Err(e).Msg("Ошибка запуска")
+		log.Fatal().Err(e).Msg("Start server error")
 	}
 }
 
