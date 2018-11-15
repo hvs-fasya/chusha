@@ -48,7 +48,7 @@
       },
       Logout: function () {
         console.log("LOGOUT: " + this.user);
-        this.axios.delete('session',{},{withCredentials: true})
+        this.axios.delete('session',{},{jar: true, withCredentials: true})
           .then(response => {
             console.log(response.data)
           })

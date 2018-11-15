@@ -18,7 +18,7 @@ type Server struct {
 // Run server
 func (s *Server) Run(connstr string) {
 	log.Info().Msg("Запуск сервера на " + connstr)
-	e := http.ListenAndServe(connstr, NewRouter())
+	e := http.ListenAndServeTLS(connstr, "cert.pem", "key.pem", NewRouter())
 	if e != nil {
 		log.Fatal().Err(e).Msg("Ошибка запуска")
 	}

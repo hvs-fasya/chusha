@@ -3,14 +3,16 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"time"
 
+	"github.com/rs/zerolog/log"
 	"github.com/satori/go.uuid"
 
 	"github.com/hvs-fasya/chusha/internal/engine"
+	"github.com/hvs-fasya/chusha/internal/redis-client"
 )
 
 //SessionCreate login user
@@ -37,8 +39,6 @@ func SessionCreate(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	fmt.Printf("%+v", user)
-	//todo: save sessionToken to redis
 	sessionToken := uuid.NewV4().String()
 	http.SetCookie(w, &http.Cookie{
 		Name:     SessionCookieName,
@@ -47,8 +47,15 @@ func SessionCreate(w http.ResponseWriter, r *http.Request) {
 		Secure:   true,
 		HttpOnly: true,
 	})
+	err = redis_client.RedisClient.Client.Set(sessionToken, user.Nickname, time.Duration(SessionCookieExpirationTime)*time.Minute).Err()
+	if err != nil {
+		log.Error().Msgf("redis SET SESSION TOKEN request error: %s", err)
+		respond500(w)
+		return
+	}
+	resp, _ := json.Marshal(user)
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte{})
+	w.Write(resp)
 }
 
 //SessionDestroy logout user
@@ -64,9 +71,22 @@ func SessionDestroy(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	fmt.Println(c.Value)
-	//todo: destroy sessionToken in redis
-	sessionToken := c.Value
+	sessionToken := strings.Replace(c.Value, SessionCookieName+"=", "", 1)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	valid, _ := redis_client.RedisClient.Client.Exists(sessionToken).Result()
+	if valid == 0 {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	_, err = redis_client.RedisClient.Client.Del(sessionToken).Result()
+	if err != nil {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(sessionToken))
+		return
+	}
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(sessionToken))
 }

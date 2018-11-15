@@ -16,10 +16,12 @@
             </q-toolbar>
 
             <div class="layout-padding">
-                <q-input v-if="modalType == 'login'" v-model="user.nickname" float-label="Логин или email" clearable/>
-                <q-input v-if="modalType == 'signup'" v-model="user.nickname" float-label="Логин" clearable/>
-                <q-input v-if="modalType == 'signup'" v-model="user.email" float-label="Email" clearable/>
-                <q-input v-model="user.password" float-label="Пароль" clearable/>
+                <q-input v-if="modalType == 'login'" v-model="user.login" float-label="Логин или email*" clearable/>
+                <q-input v-if="modalType == 'signup'" v-model="user.nickname" float-label="Логин*" clearable/>
+                <q-input v-if="modalType == 'signup'" v-model="user.email" float-label="Email*" clearable/>
+                <q-input v-model="user.password" float-label="Пароль*" clearable/>
+                <q-input v-if="modalType == 'signup'" v-model="user.name" float-label="Имя" clearable/>
+                <q-input v-if="modalType == 'signup'" v-model="user.lastname" float-label="Фамилия" clearable/>
                 <div class="q-mt-xl">
                     <q-btn
                             rounded
@@ -53,9 +55,12 @@
         opened: false,
         modalType: "",
         user: {
+          login:"",
           nickname: "",
           password: "",
-          email: ""
+          email: "",
+          name:"",
+          lastname:""
         }
       }
     },
@@ -70,22 +75,26 @@
       this.opened = false;
       this.modalType = "";
       this.user = {
+        login:"",
         nickname: "",
         password: "",
-        email: ""
+        email: "",
+        name:"",
+        lastname:""
       }
     },
     methods: {
     Login: function () {
-      console.log("LOGIN: " + this.user);
+      console.log(this.user);
       this.axios.post('session',{
-            username: this.user.nickname,
+            login: this.user.login,
             password: this.user.password
         },
         {
           withCredentials: true
         })
         .then(response => {
+            console.log(response.headers)
             console.log(response.data)
         })
         .catch(e => {

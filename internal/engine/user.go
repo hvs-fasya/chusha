@@ -3,20 +3,20 @@ package engine
 import (
 	"github.com/hvs-fasya/chusha/internal/models"
 	"github.com/hvs-fasya/chusha/internal/utils"
+	"golang.org/x/crypto/bcrypt"
 )
 
 //UserCreate create new user in db
-func (db *PgDB) UserCreate(user *models.UserNewInput) error {
-	//todo: role?
+func (db *PgDB) UserCreate(user *models.UserNewInput, role string) error {
 	var e error
 	user.PswdHash, e = utils.HashAndSalt([]byte(user.Password))
 	if e != nil {
 		return e
 	}
-	q := `INSERT INTO users (email, phone, nickname, name, lastname, role_id)
-			VALUES ($1, $2, $3, $4, $5, $6)
+	q := `INSERT INTO users (email, phone, nickname, name, lastname, role_id, pswd_hash)
+			VALUES ($1, $2, $3, $4, $5, (SELECT id FROM roles WHERE role=$6 LIMIT 1), $7)
 			RETURNING id`
-	e = db.Conn.QueryRow(q, user.Email, user.Phone, user.Nickname, user.Name, user.LastName, user.Role.ID).Scan(
+	e = db.Conn.QueryRow(q, user.Email, user.Phone, user.Nickname, user.Name, user.LastName, role, user.PswdHash).Scan(
 		&user.ID,
 	)
 	if e != nil {
@@ -29,28 +29,25 @@ func (db *PgDB) UserCreate(user *models.UserNewInput) error {
 func (db *PgDB) UserCheck(login string, pwd string) (*models.UserDB, error) {
 	user := new(models.UserDB)
 	user.Role = new(models.RoleDB)
-	pwdHash, e := utils.HashAndSalt([]byte(pwd))
-	if e != nil {
-		return user, e
-	}
-	user.PswdHash = pwdHash
 	q := `SELECT u.id, u.email, u.phone, u.nickname, u.name, u.lastname, u.pswd_hash,
 			r.id, r.role
 		FROM users u
 		JOIN roles r ON r.id=u.role_id
-		WHERE nickname=$1 AND pswd_hash=$2`
-	err := db.Conn.QueryRow(q, login, pwdHash).Scan(
+		WHERE (nickname=$1 OR email=$1) LIMIT 1`
+	err := db.Conn.QueryRow(q, login).Scan(
 		&user.ID,
 		&user.Email,
 		&user.Phone,
 		&user.Nickname,
 		&user.Name,
 		&user.LastName,
+		&user.PswdHash,
 		&user.Role.ID,
 		&user.Role.Role,
 	)
 	if err != nil {
 		return user, err
 	}
-	return user, nil
+	err = bcrypt.CompareHashAndPassword([]byte(user.PswdHash), []byte(pwd))
+	return user, err //if err != nil => user not authorized
 }

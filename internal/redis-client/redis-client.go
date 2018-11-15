@@ -6,8 +6,8 @@ import (
 	"github.com/go-redis/redis"
 )
 
-//RedisClinet global redis client variable
-var RedisClinet Redis
+//RedisClient global redis client variable
+var RedisClient Redis
 
 //Redis redis clinet wrapper
 type Redis struct {
@@ -25,6 +25,6 @@ func NewRedis(opts *redis.Options) error {
 	if pong != "PONG" {
 		return errors.New("unsuccessfull redis ping")
 	}
-	RedisClinet.Client = client
+	RedisClient.Client = client
 	return nil
 }

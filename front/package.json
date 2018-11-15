@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "axios-cookiejar-support": "^0.4.2",
     "https": "^1.0.0",
     "quasar-extras": "^2.0.4",
     "quasar-framework": "^0.17.0",

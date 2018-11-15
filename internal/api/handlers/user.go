@@ -12,12 +12,12 @@ import (
 
 	"github.com/hvs-fasya/chusha/internal/engine"
 	"github.com/hvs-fasya/chusha/internal/models"
+	"github.com/hvs-fasya/chusha/internal/redis-client"
 	"github.com/hvs-fasya/chusha/internal/utils"
 )
 
 //UserRegister register user
 func UserRegister(w http.ResponseWriter, r *http.Request) {
-	//todo: all user attributes at frontend
 	var err error
 	payload, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -49,18 +49,10 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 		w.Write(resp)
 		return
 	}
-	user.Role = new(models.RoleDB)
-	user.Role, err = engine.DB.RoleGetByName(utils.ClientRoleName)
-	if err != nil {
-		log.Error().Msgf("database GET ROLE BY NAME request error: %s", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		respond500(w)
-		return
-	}
-	err = engine.DB.UserCreate(user)
+	err = engine.DB.UserCreate(user, utils.ClientRoleName)
 	if err != nil {
 		if pgerr, ok := err.(*pq.Error); ok {
-			if pgerr.Code == "23503" { //unique key login or email violation
+			if pgerr.Code == "23505" { //unique key login or email violation
 				w.WriteHeader(http.StatusBadRequest)
 				w.Write(errorToResponse("login or email "+ErrAlreadyExist, "логин или email "+ErrAlreadyExistRus))
 				return
@@ -77,11 +69,16 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     SessionCookieName,
 		Value:    sessionToken,
-		Expires:  time.Now().Add(time.Duration(SessionCookieExpirationTime) * time.Minute),
+		Expires:  time.Now().Add(time.Duration(SessionCookieExpirationTime) * time.Second),
 		Secure:   true,
 		HttpOnly: true,
 	})
-	//todo: put session token to redis with key=new user login????
+	err = redis_client.RedisClient.Client.Set(sessionToken, user.Nickname, time.Duration(SessionCookieExpirationTime)*time.Minute).Err()
+	if err != nil {
+		log.Error().Msgf("redis SET SESSION TOKEN request error: %s", err)
+		respond500(w)
+		return
+	}
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte{})
 }

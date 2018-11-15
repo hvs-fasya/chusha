@@ -1,11 +1,14 @@
 package migrate
 
 import (
-	"github.com/hvs-fasya/chusha/internal/utils"
 	"github.com/rubenv/sql-migrate"
+
+	"github.com/hvs-fasya/chusha/internal/utils"
 )
 
 func getSource() (migrations *migrate.MemoryMigrationSource) {
+	var h string
+	h, _ = utils.HashAndSalt([]byte("12345678"))
 	migrations = &migrate.MemoryMigrationSource{
 		Migrations: []*migrate.Migration{
 			&migrate.Migration{
@@ -39,10 +42,10 @@ func getSource() (migrations *migrate.MemoryMigrationSource) {
 									unique (nickname),
 									CONSTRAINT users_role_id_fkey foreign key (role_id) REFERENCES roles(id) ON DELETE CASCADE
 								);
-					INSERT INTO users (nickname, name, role_id) VALUES ('Nina', 'Nina',
-						(SELECT id FROM roles WHERE role='` + utils.AdminRoleName + `'));
-					INSERT INTO users (nickname, name, role_id) VALUES ('admin', 'admin',
-						(SELECT id FROM roles WHERE role='` + utils.AdminRoleName + `'));`,
+					INSERT INTO users (nickname, name, role_id, pswd_hash) VALUES ('Nina', 'Nina',
+						(SELECT id FROM roles WHERE role='` + utils.AdminRoleName + `'), '` + h + `');
+					INSERT INTO users (nickname, name, role_id, pswd_hash) VALUES ('admin', 'admin',
+						(SELECT id FROM roles WHERE role='` + utils.AdminRoleName + `'), '` + h + `');`,
 				},
 				Down: []string{"ALTER TABLE users DROP CONSTRAINT users_role_id_fkey; DROP TABLE users;"},
 			},

@@ -6,11 +6,11 @@ module.exports = {
   devServer: {
     hot: true,
     port: 8087, // CHANGE YOUR PORT HERE!
-    https: false,
+    https: true,
     inline: true,
     proxy: {
       '/api/v1/':{
-        target: 'http://localhost:8080'
+        target: 'https://localhost:8080'
       }
     }
   },

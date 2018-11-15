@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import axios from 'axios'
+import axiosCookieJarSupport from 'axios-cookiejar-support'
+import tough from 'tough-cookie'
 import VueAxios from 'vue-axios'
 import App from './App.vue'
 import router from './router'
@@ -21,6 +23,7 @@ Vue.config.productionTip = false;
 
 Vue.use(VueAxios, axios);
 Vue.axios.defaults.baseURL = process.env.VUE_APP_ROOT_API;
+axiosCookieJarSupport(axios);
 
 new Vue({
   router,
