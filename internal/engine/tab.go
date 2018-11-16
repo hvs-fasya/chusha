@@ -1,8 +1,6 @@
 package engine
 
 import (
-	"strconv"
-
 	"github.com/lib/pq"
 
 	"github.com/hvs-fasya/chusha/internal/models"
@@ -14,9 +12,12 @@ func (db *PgDB) TabsGet(enabled bool) ([]*models.Tab, error) {
 	query := `SELECT t.id, t.title, t.user_type_visible, t.index, t.enabled,
 				tp.id, tp.type
 			FROM tabs t 
-			JOIN tab_types tp ON tp.id=t.tab_type_id
-			WHERE t.enabled = $1::boolean ORDER BY t.index`
-	rows, err := db.Conn.Query(query, strconv.FormatBool(enabled))
+			JOIN tab_types tp ON tp.id=t.tab_type_id`
+	if enabled {
+		query = query + ` WHERE t.enabled = true`
+	}
+	query = query + ` ORDER BY t.index`
+	rows, err := db.Conn.Query(query)
 	if err != nil {
 		return tabs, err
 	}
