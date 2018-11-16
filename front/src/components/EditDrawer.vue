@@ -7,7 +7,8 @@
                 <q-toggle
                         checked-icon="flare"
                         unchecked-icon="visibility_off"
-                        v-model="tab.enabled" />
+                        v-model="tab.enabled"
+                        @input="ToggleTab(tab.id, tab.enabled)"/>
             </q-item-side>
         </q-item>
         <q-item-separator />
@@ -45,6 +46,9 @@
               console.log("ERROR: " + e)
             }
           )
+      },
+      ToggleTab: function(id, enabled){
+        this.$store.commit('toggleTab', {id, enabled})
       }
     }
   }

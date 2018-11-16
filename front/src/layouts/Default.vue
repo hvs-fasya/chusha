@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHh Lpr lFf">
   <LoginForm />
-  <q-layout-header :reveal="headerReveal">
+  <q-layout-header reveal>
     <q-toolbar color="primary">
       <q-toolbar-title>
         CHUSHA
@@ -27,7 +27,7 @@
     </q-toolbar>
 
     <q-tabs align="justify"  color="primary" inverted>
-      <q-route-tab v-for="t in this.$store.state.tabs" :key="t.id"
+      <q-route-tab v-for="t in this.$store.state.tabs" :key="t.id" v-if="t.enabled"
               :to="t.tab_type.type"
               exact
               slot="title">

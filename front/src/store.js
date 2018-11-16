@@ -13,6 +13,13 @@ export default new Vuex.Store({
     setTabs (state, tabs) {
       state.tabs = tabs
     },
+    toggleTab(state, {id, enabled}){
+      for (let tab of state.tabs){
+        if (tab.id === id){
+          tab.enabled = enabled
+        }
+      }
+    },
     setUser (state, user) {
       state.user = user
     },
@@ -27,6 +34,9 @@ export default new Vuex.Store({
   actions: {
     setTabs({ commit }, tabs) {
       commit('setTabs', tabs)
+    },
+    toggleTab({commit}, {id, enabled}){
+      commit('toggleTab', id, enabled)
     },
     setUser({ commit }, user) {
       commit('setUser', user)
