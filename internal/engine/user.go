@@ -1,9 +1,10 @@
 package engine
 
 import (
+	"golang.org/x/crypto/bcrypt"
+
 	"github.com/hvs-fasya/chusha/internal/models"
 	"github.com/hvs-fasya/chusha/internal/utils"
-	"golang.org/x/crypto/bcrypt"
 )
 
 //UserCreate create new user in db

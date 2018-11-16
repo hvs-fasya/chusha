@@ -1,12 +1,23 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <LoginForm />
+  <LoginForm />
+  <q-layout-header :reveal="headerReveal">
     <q-toolbar color="primary">
       <q-toolbar-title>
         CHUSHA
       </q-toolbar-title>
       <span v-if="$store.state.loggedIn">{{$store.state.user.email}}</span>
       <q-btn v-if="$store.state.loggedIn" class="float-right" flat @click="Logout()">Выйти</q-btn>
+      <q-toggle
+              color="black"
+              checked-icon="edit"
+              unchecked-icon="visibility_off"
+              v-if="$store.state.loggedIn && $store.state.user.role.role === 'admin'"
+              class="float-right"
+              v-model="editMode"
+              left-label
+              label="Режим редактирования" />
+      <q-btn v-if="editMode" flat round dense icon="menu" @click="drawerOpen = !drawerOpen" aria-label="Toggle edit menu" />
       <q-btn v-if="!$store.state.loggedIn" flat @click="ShowSignUp()">Зарегистрироваться</q-btn>
       <q-btn v-if="!$store.state.loggedIn" flat @click="ShowLogin()">Войти</q-btn>
     </q-toolbar>
@@ -19,7 +30,10 @@
         {{ t.title }}
       </q-route-tab>
     </q-tabs>
-
+  </q-layout-header>
+    <q-layout-drawer v-if="editMode" side="right" v-model="drawerOpen" no-hide-on-route-change behavior="desktop" :content-class="$q.theme === 'mat' ? 'bg-pink-1' : null">
+        <EditDrawer />
+    </q-layout-drawer>
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -27,16 +41,26 @@
 </template>
 
 <script>
+  //todo: adjustable colors
+  //todo: adjustable brand name
+  //todo: adjustable tabs visibility
+  //todo: pull to refresh
+  //todo: tabs adaptive
+  //todo: header adaptive
   import {EventBus} from "../event-bus";
   import LoginForm from "../components/LoginForm"
+  import EditDrawer from "../components/EditDrawer"
   import * as utils from './../utils';
   export default {
     data () {
       return {
+        editMode: true,
+        drawerOpen: true
       }
     },
     components: {
-      LoginForm
+      LoginForm,
+      EditDrawer
     },
     name: 'LayoutDefault',
     mounted(){

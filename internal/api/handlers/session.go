@@ -11,7 +11,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/satori/go.uuid"
 
-	"fmt"
 	"github.com/hvs-fasya/chusha/internal/engine"
 	"github.com/hvs-fasya/chusha/internal/redis-client"
 )
@@ -92,7 +91,6 @@ func SessionDestroy(w http.ResponseWriter, r *http.Request) {
 func SessionCheck(w http.ResponseWriter, r *http.Request) {
 	c, err := r.Cookie(SessionCookieName)
 	if err != nil {
-		fmt.Println(err)
 		switch err {
 		case http.ErrNoCookie:
 			w.WriteHeader(http.StatusUnauthorized)
