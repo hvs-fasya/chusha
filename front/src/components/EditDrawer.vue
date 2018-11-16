@@ -1,7 +1,7 @@
 <template>
     <q-list highlight>
         <q-list-header>ВКЛАДКИ</q-list-header>
-        <q-item v-for="tab in allTabs">
+        <q-item v-for="tab in allTabs" :key="tab.id">
             <q-item-main :label="tab.title" />
             <q-item-side right>
                 <q-toggle
