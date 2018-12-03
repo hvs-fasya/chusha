@@ -3,6 +3,7 @@ package engine
 import (
 	"golang.org/x/crypto/bcrypt"
 
+	"database/sql"
 	"github.com/hvs-fasya/chusha/internal/models"
 	"github.com/hvs-fasya/chusha/internal/utils"
 )
@@ -50,7 +51,10 @@ func (db *PgDB) UserCheck(login string, pwd string) (*models.UserDB, error) {
 		return user, err
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(user.PswdHash), []byte(pwd))
-	return user, err //if err != nil => user not authorized
+	if err != nil {
+		return user, sql.ErrNoRows
+	}
+	return user, nil //if err != nil => user not authorized
 }
 
 //UserGetByName get user object by nickname
