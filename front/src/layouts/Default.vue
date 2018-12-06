@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHh Lpr lFf">
   <LoginForm />
-  <q-layout-header :reveal="headerReveal">
+  <q-layout-header reveal>
     <q-toolbar color="primary">
       <q-toolbar-title>
         CHUSHA
@@ -17,13 +17,17 @@
               v-model="editMode"
               left-label
               label="Режим редактирования" />
-      <q-btn v-if="editMode" flat round dense icon="menu" @click="drawerOpen = !drawerOpen" aria-label="Toggle edit menu" />
+      <q-btn v-if="editMode" flat round dense icon="menu" @click="drawerOpen = !drawerOpen" class="q-ml-sm">
+          <q-tooltip>
+              Меню редактирования
+          </q-tooltip>
+      </q-btn>
       <q-btn v-if="!$store.state.loggedIn" flat @click="ShowSignUp()">Зарегистрироваться</q-btn>
       <q-btn v-if="!$store.state.loggedIn" flat @click="ShowLogin()">Войти</q-btn>
     </q-toolbar>
 
     <q-tabs align="justify"  color="primary" inverted>
-      <q-route-tab v-for="t in this.$store.state.tabs" :key="t.id"
+      <q-route-tab v-for="t in this.$store.state.tabs" :key="t.id" v-if="t.enabled"
               :to="t.tab_type.type"
               exact
               slot="title">

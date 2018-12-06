@@ -1,13 +1,14 @@
 <template>
     <q-list highlight>
         <q-list-header>ВКЛАДКИ</q-list-header>
-        <q-item v-for="tab in allTabs">
+        <q-item v-for="tab in allTabs" :key="tab.id">
             <q-item-main :label="tab.title" />
             <q-item-side right>
                 <q-toggle
                         checked-icon="flare"
                         unchecked-icon="visibility_off"
-                        v-model="tab.enabled" />
+                        v-model="tab.enabled"
+                        @input="ToggleTab(tab.id, tab.enabled)"/>
             </q-item-side>
         </q-item>
         <q-item-separator />
@@ -45,6 +46,9 @@
               console.log("ERROR: " + e)
             }
           )
+      },
+      ToggleTab: function(id, enabled){
+        this.$store.commit('toggleTab', {id, enabled})
       }
     }
   }
