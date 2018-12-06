@@ -7,7 +7,8 @@ export default new Vuex.Store({
   state: {
     tabs:[],
     user: null,
-    loggedIn: false
+    loggedIn: false,
+    socket: null
   },
   mutations: {
     setTabs (state, tabs) {
@@ -27,8 +28,14 @@ export default new Vuex.Store({
       state.loggedIn = true
     },
     setLoggedOut (state) {
-      state.loggedIn = false
+      state.loggedIn = false;
       state.user = null
+    },
+    setSocket (state, socket) {
+      state.socket = socket;
+      state.socket.addEventListener('message', function(e) {
+        console.log(e.data)
+      });
     }
   },
   actions: {
@@ -46,6 +53,9 @@ export default new Vuex.Store({
     },
     setLoggedOut ({ commit }) {
       commit('setLoggedIn')
+    },
+    setSocket ({commit}, socket){
+      commit('setSocket', socket)
     }
   }
 })

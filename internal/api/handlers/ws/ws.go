@@ -29,7 +29,7 @@ func ServeWs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer ws.Close()
-	ws.WriteMessage(websocket.TextMessage, []byte("connected"))
+	ws.WriteMessage(websocket.TextMessage, []byte("websocket connection set"))
 	//todo:
 	//add conn to clients pool
 	//begin to listen messages from clients???

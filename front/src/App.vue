@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view/>
+    <router-view></router-view>
   </div>
 </template>
 <script>
@@ -12,10 +12,9 @@
     created(){
       this.SetTabs();
       this.RefreshAuth();
-      this.ws = new WebSocket("wss://" + process.env.VUE_APP_WS_URL);
-      this.ws.addEventListener('message', function(e) {
-        console.log(e.data)
-      });
+      //open wss connection to server
+      let socket = new WebSocket("wss://" + process.env.VUE_APP_WS_URL);
+      this.$store.dispatch('setSocket', socket)
     },
     components:{Blog, Webinar, Home},
     methods: {
