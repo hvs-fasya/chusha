@@ -12,6 +12,10 @@
     created(){
       this.SetTabs();
       this.RefreshAuth();
+      this.ws = new WebSocket("wss://" + process.env.VUE_APP_WS_URL);
+      this.ws.addEventListener('message', function(e) {
+        console.log(e.data)
+      });
     },
     components:{Blog, Webinar, Home},
     methods: {

@@ -8,6 +8,7 @@ import (
 
 	"github.com/hvs-fasya/chusha/internal/api/handlers"
 	"github.com/hvs-fasya/chusha/internal/api/handlers/front"
+	"github.com/hvs-fasya/chusha/internal/api/handlers/ws"
 )
 
 // Server wraps http server
@@ -33,6 +34,8 @@ func NewRouter() *mux.Router {
 	rt.HandleFunc(`/{file:favicon.+}`, front.FaviconHandler).Methods("GET")
 	rt.HandleFunc(`/{js:.+\.js}`, front.JSHandler).Methods("GET")
 	rt.HandleFunc("/fonts/{font}", front.FontsHandler).Methods("GET")
+	//websocket
+	rt.HandleFunc("/wss", ws.ServeWs)
 	//api
 	apiRouter := rt.PathPrefix(("/api/v1")).Subrouter()
 	apiRouter.Use(setApiHeaders)
