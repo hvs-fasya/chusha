@@ -40,3 +40,15 @@ func (db *PgDB) TabsGet(enabled bool) ([]*models.Tab, error) {
 	}
 	return tabs, err
 }
+
+//TabsSet set tabs state
+func (db *PgDB) TabsSet(tabs []*models.Tab) error {
+	var q = `UPDATE tabs SET title=$1, index=$2, enabled=$3 WHERE id=$4`
+	for _, tab := range tabs {
+		_, e := db.Conn.Exec(q, tab.Title, tab.Index, tab.Enabled, tab.ID)
+		if e != nil {
+			return e
+		}
+	}
+	return nil
+}
