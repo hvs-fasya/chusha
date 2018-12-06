@@ -2,14 +2,15 @@ package handlers
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 
 	"github.com/rs/zerolog/log"
 
+	"github.com/hvs-fasya/chusha/internal/api/handlers/ws"
 	"github.com/hvs-fasya/chusha/internal/engine"
 	"github.com/hvs-fasya/chusha/internal/models"
-	"io/ioutil"
 )
 
 //TabsGet get tabs list
@@ -73,5 +74,21 @@ func TabsSet(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(resp))
 		return
 	}
+	newTabs, e := engine.DB.TabsGet(false)
+	if e != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Error().Msgf("[DB] TabsGet error %v", e)
+		errResp := ErrResponse{
+			Errors: []string{http.StatusText(http.StatusInternalServerError)},
+		}
+		resp, _ := json.Marshal(errResp)
+		w.Write([]byte(resp))
+		return
+	}
+	msg := &ws.Message{
+		Msg:     "refresh tabs",
+		Payload: newTabs,
+	}
+	ws.OutChann <- msg
 	w.WriteHeader(http.StatusOK)
 }

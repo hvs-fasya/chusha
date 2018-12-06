@@ -28,15 +28,15 @@ func (s *Server) Run(connstr string) {
 // NewRouter Создать - новый роутер
 func NewRouter() *mux.Router {
 	rt := new(mux.Router)
-	//front
+	// front
 	rt.HandleFunc("/alive", handlers.Alive).Methods("GET")
 	rt.HandleFunc("/", front.IndexHandler).Methods("GET")
 	rt.HandleFunc(`/{file:favicon.+}`, front.FaviconHandler).Methods("GET")
 	rt.HandleFunc(`/{js:.+\.js}`, front.JSHandler).Methods("GET")
 	rt.HandleFunc("/fonts/{font}", front.FontsHandler).Methods("GET")
-	//websocket
+	// websocket
 	rt.HandleFunc("/wss", ws.ServeWs)
-	//api
+	// api/v1
 	apiRouter := rt.PathPrefix(("/api/v1")).Subrouter()
 	apiRouter.Use(setApiHeaders)
 	apiRouter.Use(respondOptions)

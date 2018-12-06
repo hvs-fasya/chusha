@@ -13,6 +13,7 @@ import (
 
 	"github.com/hvs-fasya/chusha/internal/api"
 	"github.com/hvs-fasya/chusha/internal/api/handlers/front"
+	"github.com/hvs-fasya/chusha/internal/api/handlers/ws"
 	"github.com/hvs-fasya/chusha/internal/engine"
 	"github.com/hvs-fasya/chusha/internal/migrate"
 	"github.com/hvs-fasya/chusha/internal/redis-client"
@@ -95,16 +96,17 @@ func main() {
 			log.Fatal().Msg("No https certs")
 		}
 	}
+	ws.InitWebsocketsHandling()
+	front.InitFront(opts.StaticPath)
 	srv := api.Server{}
 	connstr := ":" + opts.APIPort
-	front.InitFront(opts.StaticPath)
 	srv.Run(connstr)
 }
 
 func setLogger(level int) {
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	switch level {
 	case 0:
+		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	case 1:
 		zerolog.SetGlobalLevel(zerolog.InfoLevel)
